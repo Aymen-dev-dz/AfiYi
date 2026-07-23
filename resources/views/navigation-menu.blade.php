@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+<nav x-data="{ open: false, quickModal: false }" @keydown.window.prevent.cmd.k="quickModal = true" @keydown.window.prevent.ctrl.k="quickModal = true" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -105,6 +105,13 @@
                 <!-- Global Chat Notification -->
                 <div class="ms-3 relative">
                     <livewire:global-chat-notification />
+                </div>
+
+                <!-- Quick Access Interfaces (Ctrl+K) Button -->
+                <div class="ms-3 relative">
+                    <button @click="quickModal = true" class="px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl text-xs font-black shadow-md flex items-center gap-1.5 transition hover:scale-105" title="Accès Rapide (Ctrl+K)">
+                        <span>⚡</span> <span class="hidden md:inline">Accès Rapide</span> <kbd class="px-1.5 py-0.5 bg-white/20 rounded text-[10px] font-mono">Ctrl K</kbd>
+                    </button>
                 </div>
 
                 <!-- Settings Dropdown -->
@@ -260,6 +267,55 @@
                         @endforeach
                     @endif
                 @endif
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Access Interfaces Modal (Ctrl+K) -->
+    <div x-show="quickModal" x-transition.opacity class="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4" style="display: none;">
+        <div @click.away="quickModal = false" class="bg-white dark:bg-slate-900 rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-6 animate-in fade-in zoom-in duration-200">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+                <div>
+                    <h3 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                        <span>⚡</span> Accès Rapide aux Interfaces (Ctrl + K)
+                    </h3>
+                    <p class="text-xs text-slate-400">Basculez instantanément vers n'importe quel rôle pour tester la plateforme.</p>
+                </div>
+                <button @click="quickModal = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-white text-xl">✕</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <a href="{{ route('login-as', ['email' => 'patient@example.com']) }}" class="p-4 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900 hover:scale-105 transition flex items-center gap-3 group">
+                    <span class="text-3xl p-2 bg-indigo-600 text-white rounded-xl shadow-md shrink-0">👤</span>
+                    <div>
+                        <h4 class="font-black text-sm text-slate-900 dark:text-white group-hover:text-indigo-600">Patient</h4>
+                        <p class="text-[10px] text-slate-500">Suivi d'humeur & Boutique</p>
+                    </div>
+                </a>
+
+                <a href="{{ route('login-as', ['email' => 'therapist@example.com']) }}" class="p-4 rounded-2xl bg-purple-50/60 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-900 hover:scale-105 transition flex items-center gap-3 group">
+                    <span class="text-3xl p-2 bg-purple-600 text-white rounded-xl shadow-md shrink-0">🩺</span>
+                    <div>
+                        <h4 class="font-black text-sm text-slate-900 dark:text-white group-hover:text-purple-600">Psychologue</h4>
+                        <p class="text-[10px] text-slate-500">Consultations & Planning</p>
+                    </div>
+                </a>
+
+                <a href="{{ route('login-as', ['email' => 'seller@example.com']) }}" class="p-4 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 hover:scale-105 transition flex items-center gap-3 group">
+                    <span class="text-3xl p-2 bg-emerald-600 text-white rounded-xl shadow-md shrink-0">🛍️</span>
+                    <div>
+                        <h4 class="font-black text-sm text-slate-900 dark:text-white group-hover:text-emerald-600">Vendeur</h4>
+                        <p class="text-[10px] text-slate-500">Produits & Expéditions</p>
+                    </div>
+                </a>
+
+                <a href="{{ route('login-as', ['email' => 'admin@example.com']) }}" class="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 hover:scale-105 transition flex items-center gap-3 group">
+                    <span class="text-3xl p-2 bg-amber-500 text-white rounded-xl shadow-md shrink-0">👑</span>
+                    <div>
+                        <h4 class="font-black text-sm text-slate-900 dark:text-white group-hover:text-amber-600">Admin</h4>
+                        <p class="text-[10px] text-slate-500">Supervision Globale</p>
+                    </div>
+                </a>
             </div>
         </div>
     </div>

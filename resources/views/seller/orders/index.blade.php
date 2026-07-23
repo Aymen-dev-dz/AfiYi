@@ -60,7 +60,7 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300 font-bold">
-                                            {{ number_format($order->items->sum(fn($i) => $i->price * $i->quantity), 2) }} DZD
+                                            {{ number_format($order->items->sum(fn($i) => $i->subtotal ?? (($i->unit_price ?? $i->price ?? 0) * $i->quantity)), 2) }} DZD
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <a href="{{ route('seller.orders.show', $order) }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 font-bold">Voir détails</a>
