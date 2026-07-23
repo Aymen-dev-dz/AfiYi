@@ -108,13 +108,8 @@ Route::middleware([
     })->name('dashboard.consultations.destroy');
 
     // Destiny routes
-    Route::get('/destiny/lobby', function () {
-        return view('destiny.lobby');
-    })->name('destiny.lobby');
-    
-    Route::get('/destiny/chat/{room}', function ($room) {
-        return view('destiny.chat', compact('room'));
-    })->name('destiny.chat');
+    Route::get('/destiny/lobby', \App\Livewire\Destiny\AnonymousLobby::class)->name('destiny.lobby');
+    Route::get('/destiny/chat/{match}', \App\Livewire\Destiny\AnonymousChat::class)->name('destiny.chat');
     
     Route::get('/destiny/connect/{token?}', [DestinyController::class, 'connect'])->name('destiny.connect');
     Route::get('/destiny/qrcode/{token}', [DestinyController::class, 'qrCode'])->name('destiny.qrcode.download');

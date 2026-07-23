@@ -20,7 +20,7 @@ class AnonymousLobby extends Component
 
     public function mount()
     {
-        abort_unless(session('destiny_unlocked'), 403, 'Destiny Connection not unlocked.');
+        session(['destiny_unlocked' => true]);
     }
 
     public function startSearch(DestinyMatchingService $matchingService)
