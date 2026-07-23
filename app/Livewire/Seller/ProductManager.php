@@ -41,6 +41,14 @@ class ProductManager extends Component
     public $thumbnail;
     public array  $wellness_benefits = [];
 
+    public function mount(): void
+    {
+        if (request()->routeIs('seller.products.create') || request()->has('create')) {
+            $this->currentTab = 'catalog';
+            $this->openCreateModal();
+        }
+    }
+
     // ── Delete Confirm ─────────────────────────────────────────────
     public bool $confirmingDelete = false;
     public ?int $deletingId       = null;

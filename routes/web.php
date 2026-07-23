@@ -111,6 +111,7 @@ Route::middleware([
 
     Route::get('/seller/dashboard', \App\Livewire\Seller\ProductManager::class)->name('seller.dashboard');
     Route::get('/seller/products', \App\Livewire\Seller\ProductManager::class)->name('seller.products.index');
+    Route::get('/seller/products/create', \App\Livewire\Seller\ProductManager::class)->name('seller.products.create');
 
     Route::get('/admin/dashboard', \App\Livewire\Admin\Dashboard::class)->name('admin.dashboard');
     Route::get('/admin/users', \App\Livewire\Admin\UserManager::class)->name('admin.users.index');
