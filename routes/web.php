@@ -68,7 +68,7 @@ Route::middleware([
             return redirect()->route('therapist.dashboard');
         }
         if ($user && ($user->role === 'seller' || $user->hasRole('Seller'))) {
-            return redirect()->route('seller.orders.index');
+            return redirect()->route('seller.dashboard');
         }
         if ($user && ($user->role === 'admin' || $user->hasRole('Admin') || $user->hasRole('Super Admin'))) {
             return redirect()->route('admin.dashboard');
@@ -109,6 +109,7 @@ Route::middleware([
     Route::get('/therapist/schedule', \App\Livewire\Therapist\ScheduleManager::class)->name('therapist.schedule');
     Route::get('/therapist/profile', \App\Livewire\Therapist\ProfileManager::class)->name('therapist.profile');
 
+    Route::get('/seller/dashboard', \App\Livewire\Seller\ProductManager::class)->name('seller.dashboard');
     Route::get('/seller/products', \App\Livewire\Seller\ProductManager::class)->name('seller.products.index');
 
     Route::get('/admin/dashboard', \App\Livewire\Admin\Dashboard::class)->name('admin.dashboard');
