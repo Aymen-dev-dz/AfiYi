@@ -30,26 +30,26 @@ class DatabaseSeeder extends Seeder
         $password = Hash::make('password');
 
         $admin = User::firstOrCreate(
-            ['email' => 'admin@af-iyi.com'],
-            ['name' => 'AF IYI Admin', 'password' => $password, 'email_verified_at' => now()]
+            ['email' => 'admin@example.com'],
+            ['name' => 'AF IYI Admin', 'password' => $password, 'role' => 'admin', 'email_verified_at' => now()]
         );
         $admin->assignRole('Super Admin');
 
         $patient = User::firstOrCreate(
             ['email' => 'patient@example.com'],
-            ['name' => 'Sarah (Patient)', 'password' => $password, 'email_verified_at' => now()]
+            ['name' => 'Sarah (Patient)', 'password' => $password, 'role' => 'patient', 'email_verified_at' => now()]
         );
         $patient->assignRole('User');
 
         $seller = User::firstOrCreate(
             ['email' => 'seller@example.com'],
-            ['name' => 'Wellness Store', 'password' => $password, 'email_verified_at' => now()]
+            ['name' => 'Wellness Store', 'password' => $password, 'role' => 'seller', 'email_verified_at' => now()]
         );
         $seller->assignRole('Seller');
 
         $therapistUser = User::firstOrCreate(
             ['email' => 'therapist@example.com'],
-            ['name' => 'Dr. Emma Watson', 'password' => $password, 'email_verified_at' => now()]
+            ['name' => 'Dr. Emma Watson', 'password' => $password, 'role' => 'therapist', 'email_verified_at' => now()]
         );
         $therapistUser->assignRole('Therapist');
 

@@ -29,10 +29,11 @@ php artisan route:clear || true
 php artisan view:clear || true
 php artisan cache:clear || true
 
-# 6. Run database migrations
-php artisan migrate --force || echo "Migration warning: continuing..."
+# 6. Run database migrations and seed default accounts
+php artisan migrate --force || echo "Migration notice..."
+php artisan db:seed --force || echo "Seeder notice..."
 
-# 7. Ensure permissions once more after migrations
+# 7. Ensure permissions once more after migrations and seeding
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database /var/www/html/.env
 chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database /var/www/html/.env
 
