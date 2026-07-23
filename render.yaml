@@ -18,4 +18,6 @@ services:
       - key: DB_DATABASE
         value: /var/www/html/database/database.sqlite
       - key: SESSION_DRIVER
-        value: file
+        value: cookie
+      - key: LOG_CHANNEL
+        value: stderr
