@@ -14,14 +14,13 @@ if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force
 fi
 
-# Clear caches to avoid any stale configuration
+# Run database migrations FIRST (creates cache table, users, etc.)
+php artisan migrate --force
+
+# Clear caches
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
-php artisan cache:clear
-
-# Run database migrations
-php artisan migrate --force
 
 # Start Apache in foreground
 exec apache2-foreground
