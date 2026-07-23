@@ -17,8 +17,9 @@ RUN apt-get update && apt-get install -y \
 
 RUN docker-php-ext-install pdo pdo_sqlite mbstring exif pcntl bcmath gd
 
-# Enable Apache mod_rewrite
+# Enable Apache mod_rewrite and AllowOverride All
 RUN a2enmod rewrite
+RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

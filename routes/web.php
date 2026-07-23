@@ -18,6 +18,21 @@ Route::get('/', function () {
 
 Route::get('/lang/{locale}', [LanguageController::class, 'switch'])->name('lang.switch');
 
+// Quick Login Helper for Testing
+Route::get('/login-as/{email}', function ($email) {
+    $user = \App\Models\User::where('email', $email)->first();
+    if (!$user) {
+        $user = \App\Models\User::create([
+            'name' => ucfirst(explode('@', $email)[0]),
+            'email' => $email,
+            'password' => bcrypt('password'),
+            'role' => str_contains($email, 'therapist') ? 'therapist' : (str_contains($email, 'admin') ? 'admin' : (str_contains($email, 'seller') ? 'seller' : 'patient')),
+        ]);
+    }
+    auth()->login($user);
+    return redirect()->route('dashboard');
+})->name('login-as');
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
