@@ -19,18 +19,19 @@ Route::get('/', function () {
 Route::get('/lang/{locale}', [LanguageController::class, 'switch'])->name('lang.switch');
 
 // Quick Login Helper for Testing
-Route::get('/login-as/{email}', function ($email) {
+Route::get('/login-as/{email}', function (\Illuminate\Http\Request $request, $email) {
     $user = \App\Models\User::where('email', $email)->first();
     if (!$user) {
-        $user = \App\Models\User::create([
+        $role = str_contains($email, 'therapist') ? 'therapist' : (str_contains($email, 'admin') ? 'admin' : (str_contains($email, 'seller') ? 'seller' : 'patient'));
+        $user = \App\Models\User::forceCreate([
             'name' => ucfirst(explode('@', $email)[0]),
             'email' => $email,
-            'password' => bcrypt('password'),
-            'role' => str_contains($email, 'therapist') ? 'therapist' : (str_contains($email, 'admin') ? 'admin' : (str_contains($email, 'seller') ? 'seller' : 'patient')),
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'role' => $role,
         ]);
     }
     auth()->login($user);
-    return redirect()->route('dashboard');
+    return redirect('/dashboard');
 })->name('login-as');
 
 Route::middleware([
