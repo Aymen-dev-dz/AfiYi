@@ -8,7 +8,9 @@ services:
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
-        value: "true"
+        value: "false"
+      - key: APP_KEY
+        value: base64:zZ6l2dZ+yE3hK4mP7R9sU1vW3xY5zA7bC9dE1fG3hI4=
       - key: APP_URL
         value: https://afiyi-wellness.onrender.com
       - key: DB_CONNECTION
@@ -17,5 +19,3 @@ services:
         value: /var/www/html/database/database.sqlite
       - key: SESSION_DRIVER
         value: file
-      - key: APP_KEY
-        generateValue: true

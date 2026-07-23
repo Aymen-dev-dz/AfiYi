@@ -12,7 +12,18 @@ mkdir -p /var/www/html/database \
 # Touch SQLite file
 touch /var/www/html/database/database.sqlite
 
-# Clear all cached configurations
+# Check if APP_KEY is missing or invalid, generate valid base64 key if needed
+case "$APP_KEY" in
+  base64:*) 
+    echo "Valid APP_KEY detected."
+    ;;
+  *) 
+    echo "Generating valid Laravel APP_KEY..."
+    php artisan key:generate --force
+    ;;
+esac
+
+# Clear configuration cache
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
