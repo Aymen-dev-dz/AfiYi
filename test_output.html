@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Séance — Dr. Emma Watson · AF IYI</title>
+    <meta name="robots" content="noindex,nofollow">
+
+    <script type="module" src="http://[::1]:5173/@vite/client" data-navigate-track="reload"></script><link rel="stylesheet" href="http://[::1]:5173/resources/css/app.css" data-navigate-track="reload" /><script type="module" src="http://[::1]:5173/resources/js/app.js" data-navigate-track="reload"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+        * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+
+        body { background: #0a0a0f; margin: 0; overflow-y: auto; overflow-x: hidden; }
+
+        /* Floating controls bar */
+        .controls-bar {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(15, 15, 20, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 999px;
+            padding: 10px 20px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+        }
+
+        .ctrl-btn {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all .2s;
+        }
+        .ctrl-btn:hover { transform: scale(1.1); }
+        .ctrl-btn.active   { background: rgba(255,255,255,0.12); color: #fff; }
+        .ctrl-btn.muted    { background: rgba(239,68,68,0.25); color: #ef4444; }
+        .ctrl-btn.end-call { background: #ef4444; color: #fff; width: 60px; height: 60px; }
+        .ctrl-btn.end-call:hover { background: #dc2626; }
+
+        /* Header overlay */
+        .session-header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 90;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+            padding: 16px 24px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        /* Sidebar */
+        .sidebar-panel {
+            position: fixed; right: 0; top: 0; bottom: 0;
+            width: 340px; z-index: 80;
+            background: rgba(12,12,18,0.95);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255,255,255,0.06);
+            transform: translateX(100%);
+            transition: transform .3s ease;
+        }
+        .sidebar-panel.open { transform: translateX(0); }
+
+        /* Jitsi container */
+        #jitsi-container { width: 100%; height: 100vh; background: #0a0a0f; }
+        #jitsi-container iframe { border: none; }
+
+        /* Status pill */
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16,185,129,0.3);
+            color: #6ee7b7; font-size: 11px; font-weight: 700;
+            padding: 4px 12px; border-radius: 999px; letter-spacing: .04em;
+        }
+        .status-pill .dot { width: 7px; height: 7px; background: #10b981; border-radius: 50%; animation: blink 1.2s ease-in-out infinite; }
+        @keyframes blink { 0%,100% { opacity:1 } 50% { opacity: .35 } }
+
+        /* Consent card */
+        .consent-card {
+            max-width: 560px; margin: 10vh auto;
+            background: #13131a; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 28px; overflow: hidden;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+        }
+    </style>
+</head>
+<body class="h-full" x-data="callRoom()" x-init="init()" @beforeunload.window="dispose()">
+
+            
+        <div class="min-h-screen flex items-start justify-center bg-[#0a0a0f] py-12 px-4">
+            <div class="consent-card w-full">
+                <div class="bg-gradient-to-r from-violet-600 to-indigo-600 px-8 py-6 flex items-center gap-4">
+                    <span class="text-4xl">🔒</span>
+                    <div>
+                        <h2 class="text-xl font-black text-white">Consentement de Téléconsultation</h2>
+                        <p class="text-indigo-200 text-sm mt-0.5">Avant d'entrer dans la salle sécurisée</p>
+                    </div>
+                </div>
+
+                <div class="px-8 py-7">
+                    <div class="flex items-center gap-3 mb-6 bg-violet-950/40 border border-violet-800/40 rounded-xl px-4 py-3">
+                        <span class="text-2xl">👨‍⚕️</span>
+                        <div>
+                            <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Votre thérapeute</p>
+                            <p class="text-white font-black text-sm">Dr. Emma Watson</p>
+                        </div>
+                        <div class="ml-auto text-right">
+                            <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Heure prévue</p>
+                            <p class="text-white font-black text-sm">31/07/2026 · 12:03</p>
+                        </div>
+                    </div>
+
+                    <h3 class="text-sm font-black text-white mb-3 uppercase tracking-wider">Accord de Consentement</h3>
+                    <ul class="space-y-2.5 mb-7">
+                                                <li class="flex items-start gap-3 text-xs text-slate-300 leading-relaxed">
+                            <span class="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-violet-700/40 border border-violet-600/60 flex items-center justify-center">
+                                <svg class="w-2.5 h-2.5 text-violet-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            </span>
+                            Je comprends que la téléconsultation a des limites comparées à une séance en présentiel.
+                        </li>
+                                                <li class="flex items-start gap-3 text-xs text-slate-300 leading-relaxed">
+                            <span class="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-violet-700/40 border border-violet-600/60 flex items-center justify-center">
+                                <svg class="w-2.5 h-2.5 text-violet-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            </span>
+                            Je m&#039;engage à me trouver dans un espace calme et privé pour cette séance.
+                        </li>
+                                                <li class="flex items-start gap-3 text-xs text-slate-300 leading-relaxed">
+                            <span class="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-violet-700/40 border border-violet-600/60 flex items-center justify-center">
+                                <svg class="w-2.5 h-2.5 text-violet-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            </span>
+                            Cette séance ne sera pas enregistrée sans l&#039;accord explicite des deux parties.
+                        </li>
+                                                <li class="flex items-start gap-3 text-xs text-slate-300 leading-relaxed">
+                            <span class="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-violet-700/40 border border-violet-600/60 flex items-center justify-center">
+                                <svg class="w-2.5 h-2.5 text-violet-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            </span>
+                            En cas de problème technique, le thérapeute me contactera via le numéro fourni dans mon profil.
+                        </li>
+                                                <li class="flex items-start gap-3 text-xs text-slate-300 leading-relaxed">
+                            <span class="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-violet-700/40 border border-violet-600/60 flex items-center justify-center">
+                                <svg class="w-2.5 h-2.5 text-violet-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            </span>
+                            En cas d&#039;urgence médicale ou de pensées suicidaires, j&#039;appellerai le 15 (SAMU) ou le 3114 (numéro national de prévention du suicide).
+                        </li>
+                                            </ul>
+
+                    <form action="http://127.0.0.1:8000/teletherapy/room/6/consent" method="POST">
+                        <input type="hidden" name="_token" value="3kS8wW0c2eqRGS8GnL8A5DgFSRTNyh6CMx3oOYD2" autocomplete="off">                        <label class="flex items-start gap-3 bg-slate-900/50 border border-slate-700/50 rounded-xl px-4 py-3 cursor-pointer mb-5 group">
+                            <input type="checkbox" name="consent" required class="mt-0.5 rounded border-slate-600 bg-slate-800 text-violet-500 focus:ring-violet-500">
+                            <span class="text-xs text-slate-300 leading-relaxed">J'ai lu, compris et j'accepte les conditions de cet accord de téléconsultation. Je consens à participer à cette séance.</span>
+                        </label>
+                        
+                        <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-black rounded-2xl transition shadow-lg shadow-violet-900/40 flex items-center justify-center gap-2 text-sm">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                            J'accepte — Entrer dans la salle
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

@@ -10,10 +10,14 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
+use Laravel\Cashier\Billable;
 
 class User extends Authenticatable
 {
     use HasApiTokens;
+    use HasRoles;
+    use Billable;
 
     /** @use HasFactory<UserFactory> */
     use HasFactory;
@@ -31,6 +35,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'share_mood_with_therapist',
     ];
 
     /**
@@ -54,6 +59,58 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
+    public function therapistProfile()
+    {
+        return $this->hasOne(TherapistProfile::class);
+    }
+
+    public function destinyConnections()
+    {
+        return $this->hasMany(DestinyConnection::class);
+    }
+
+    public function destinyMatches()
+    {
+        return DestinyMatch::where(function ($query) {
+            $query->where('user_a_id', $this->id)
+                  ->orWhere('user_b_id', $this->id);
+        });
+    }
+
+    public function moodEntries()
+    {
+        return $this->hasMany(MoodEntry::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function destinyMatchesThisMonth(): int
+    {
+        return DestinyMatch::where(function ($query) {
+            $query->where('user_a_id', $this->id)
+                  ->orWhere('user_b_id', $this->id);
+        })
+        ->whereMonth('created_at', now()->month)
+        ->whereYear('created_at', now()->year)
+        ->count();
+    }
+
+    public function canUseDestinyConnection(): bool
+    {
+        try {
+            if ($this->subscribed('default')) {
+                return true;
+            }
+        } catch (\Throwable $e) {
+            // Skip cashier check if tables are missing in this environment
+        }
+
+        return $this->destinyMatchesThisMonth() < 3;
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -64,6 +121,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'share_mood_with_therapist' => 'boolean',
         ];
     }
 }

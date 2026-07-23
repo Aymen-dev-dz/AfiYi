@@ -11,11 +11,29 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                @if(false)
+                <div class="hidden space-x-6 sm:-my-px sm:ms-8 sm:flex items-center">
                     <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    <x-nav-link href="{{ route('marketplace.index') }}" :active="request()->routeIs('marketplace.*')">
+                        🛍️ Boutique
+                    </x-nav-link>
+
+                    <x-nav-link href="{{ route('teletherapy.directory') }}" :active="request()->routeIs('teletherapy.*')">
+                        🩺 Téléthérapie
+                    </x-nav-link>
+
+                    <x-nav-link href="{{ route('wellness.space') }}" :active="request()->routeIs('wellness.*')">
+                        🧘 Bien-être
+                    </x-nav-link>
+
+                    <x-nav-link href="{{ route('destiny.lobby') }}" :active="request()->routeIs('destiny.*')">
+                        🌌 Destiny
+                    </x-nav-link>
                 </div>
+                @endif
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -71,6 +89,24 @@
                     </div>
                 @endif
 
+                <!-- Shopping Cart -->
+                <div class="ms-3 relative">
+                    <a href="{{ route('cart.index') }}" class="relative inline-flex items-center justify-center p-2 rounded-xl text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition shadow-sm" title="Voir mon panier">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                        @php
+                            $cartCount = array_sum(array_column(session('cart', []), 'quantity'));
+                        @endphp
+                        @if($cartCount > 0)
+                            <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 min-w-[1.25rem] text-[10px] font-black leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-indigo-600 dark:bg-indigo-500 rounded-full shadow-sm border-2 border-white dark:border-gray-800">{{ $cartCount }}</span>
+                        @endif
+                    </a>
+                </div>
+
+                <!-- Global Chat Notification -->
+                <div class="ms-3 relative">
+                    <livewire:global-chat-notification />
+                </div>
+
                 <!-- Settings Dropdown -->
                 <div class="ms-3 relative">
                     <x-dropdown align="right" width="48">
@@ -125,7 +161,16 @@
             </div>
 
             <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
+            <div class="-me-2 flex items-center sm:hidden gap-3">
+                <!-- Mobile Shopping Cart -->
+                <a href="{{ route('cart.index') }}" class="relative inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none transition">
+                    <svg class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                    @if($cartCount > 0)
+                        <span class="absolute top-1 right-1 inline-flex items-center justify-center w-4 h-4 text-[9px] font-black leading-none text-white bg-indigo-600 dark:bg-indigo-500 rounded-full border border-white dark:border-gray-800">{{ $cartCount }}</span>
+                    @endif
+                </a>
+
+                <livewire:global-chat-notification />
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                     <svg class="size-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -138,11 +183,13 @@
 
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+        @if(false)
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
         </div>
+        @endif
 
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
