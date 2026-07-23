@@ -37,10 +37,13 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/conf-ava
 RUN composer install --no-dev --optimize-autoloader
 RUN npm install && npm run build
 
+# Make entrypoint script executable
+RUN chmod +x /var/www/html/entrypoint.sh
+
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+RUN chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 
 EXPOSE 80
 
-# Entrypoint script
-CMD touch database/database.sqlite && php artisan migrate --force && apache2-foreground
+ENTRYPOINT ["/var/www/html/entrypoint.sh"]
