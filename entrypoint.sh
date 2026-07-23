@@ -1,26 +1,28 @@
 #!/bin/sh
 set -e
 
-# Ensure SQLite file exists and has full read/write permissions
-mkdir -p /var/www/html/database /var/www/html/storage/framework/views /var/www/html/storage/framework/sessions /var/www/html/storage/framework/cache /var/www/html/storage/logs
+# Ensure database and storage directories exist
+mkdir -p /var/www/html/database \
+         /var/www/html/storage/app/public \
+         /var/www/html/storage/framework/views \
+         /var/www/html/storage/framework/sessions \
+         /var/www/html/storage/framework/cache \
+         /var/www/html/storage/logs
+
+# Touch SQLite file
 touch /var/www/html/database/database.sqlite
 
-# Ensure permissions for webserver
-chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
-chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
-
-# Generate APP_KEY if missing
-if [ -z "$APP_KEY" ]; then
-    php artisan key:generate --force
-fi
-
-# Run database migrations FIRST (creates cache table, users, etc.)
-php artisan migrate --force
-
-# Clear caches
+# Clear all cached configurations
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
+
+# Ensure permissions for Apache www-data
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+
+# Run database migrations
+php artisan migrate --force
 
 # Start Apache in foreground
 exec apache2-foreground
