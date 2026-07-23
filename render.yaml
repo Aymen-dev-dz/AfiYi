@@ -1,11 +1,9 @@
 services:
   - type: web
     name: afiyi-wellness
-    env: php
+    env: docker
     region: frankfurt
     plan: free
-    buildCommand: "composer install --no-dev --optimize-autoloader && npm install && npm run build && touch database/database.sqlite && php artisan migrate --force"
-    startCommand: "php artisan serve --host 0.0.0.0 --port $PORT"
     envVars:
       - key: APP_ENV
         value: production
@@ -16,6 +14,6 @@ services:
       - key: DB_CONNECTION
         value: sqlite
       - key: DB_DATABASE
-        value: /opt/render/project/src/database/database.sqlite
+        value: /var/www/html/database/database.sqlite
       - key: APP_KEY
         generateValue: true
