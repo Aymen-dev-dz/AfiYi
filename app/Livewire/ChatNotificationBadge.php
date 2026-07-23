@@ -21,6 +21,10 @@ class ChatNotificationBadge extends Component
 
     public function render()
     {
+        if (!\Illuminate\Support\Facades\Schema::hasTable('pre_consultation_messages')) {
+            return view('livewire.chat-notification-badge', ['unreadCount' => 0]);
+        }
+
         $unreadCount = PreConsultationMessage::where('consultation_id', $this->consultationId)
             ->where('sender_id', '!=', Auth::id())
             ->whereNull('read_at')

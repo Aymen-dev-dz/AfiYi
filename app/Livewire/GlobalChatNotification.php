@@ -16,7 +16,7 @@ class GlobalChatNotification extends Component
     public function render()
     {
         $user = Auth::user();
-        if (!$user || $user->hasRole('Therapist')) {
+        if (!$user || $user->hasRole('Therapist') || !\Illuminate\Support\Facades\Schema::hasTable('pre_consultation_messages')) {
             return view('livewire.global-chat-notification', ['unreadCount' => 0]);
         }
 
