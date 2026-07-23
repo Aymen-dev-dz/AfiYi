@@ -19,19 +19,24 @@ Route::get('/', function () {
 Route::get('/lang/{locale}', [LanguageController::class, 'switch'])->name('lang.switch');
 
 // Quick Login Helper for Testing
-Route::get('/login-as/{email}', function (\Illuminate\Http\Request $request, $email) {
-    $user = \App\Models\User::where('email', $email)->first();
-    if (!$user) {
-        $role = str_contains($email, 'therapist') ? 'therapist' : (str_contains($email, 'admin') ? 'admin' : (str_contains($email, 'seller') ? 'seller' : 'patient'));
-        $user = \App\Models\User::forceCreate([
-            'name' => ucfirst(explode('@', $email)[0]),
-            'email' => $email,
-            'password' => \Illuminate\Support\Facades\Hash::make('password'),
-            'role' => $role,
-        ]);
+Route::get('/login-as/{email}', function ($email) {
+    try {
+        $user = \App\Models\User::where('email', $email)->first();
+        if (!$user) {
+            $role = str_contains($email, 'therapist') ? 'therapist' : (str_contains($email, 'admin') ? 'admin' : (str_contains($email, 'seller') ? 'seller' : 'patient'));
+            $user = new \App\Models\User();
+            $user->name = ucfirst(explode('@', $email)[0]);
+            $user->email = $email;
+            $user->password = \Illuminate\Support\Facades\Hash::make('password');
+            $user->role = $role;
+            $user->email_verified_at = now();
+            $user->save();
+        }
+        \Illuminate\Support\Facades\Auth::login($user, true);
+        return redirect('/dashboard');
+    } catch (\Throwable $e) {
+        return "Error logging in: " . $e->getMessage();
     }
-    auth()->login($user);
-    return redirect('/dashboard');
 })->name('login-as');
 
 Route::middleware([
