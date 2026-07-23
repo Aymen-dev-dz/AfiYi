@@ -31,8 +31,24 @@ Route::get('/login-as/{email}', function ($email) {
             $user->role = $role;
             $user->email_verified_at = now();
             $user->save();
+
+            if ($role === 'admin') { try { $user->assignRole('Super Admin'); } catch (\Throwable $e){} }
+            if ($role === 'therapist') { try { $user->assignRole('Therapist'); } catch (\Throwable $e){} }
+            if ($role === 'seller') { try { $user->assignRole('Seller'); } catch (\Throwable $e){} }
+            if ($role === 'patient') { try { $user->assignRole('User'); } catch (\Throwable $e){} }
         }
         \Illuminate\Support\Facades\Auth::login($user, true);
+
+        if ($user->role === 'therapist' || $user->hasRole('Therapist')) {
+            return redirect()->route('therapist.dashboard');
+        }
+        if ($user->role === 'seller' || $user->hasRole('Seller')) {
+            return redirect()->route('seller.orders.index');
+        }
+        if ($user->role === 'admin' || $user->hasRole('Admin') || $user->hasRole('Super Admin')) {
+            return redirect()->route('admin.dashboard');
+        }
+
         return redirect('/dashboard');
     } catch (\Throwable $e) {
         return "Error logging in: " . $e->getMessage();
@@ -45,8 +61,19 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-    // Dashboard
+    // Dashboard & Role Redirection
     Route::get('/dashboard', function () {
+        $user = auth()->user();
+        if ($user && ($user->role === 'therapist' || $user->hasRole('Therapist'))) {
+            return redirect()->route('therapist.dashboard');
+        }
+        if ($user && ($user->role === 'seller' || $user->hasRole('Seller'))) {
+            return redirect()->route('seller.orders.index');
+        }
+        if ($user && ($user->role === 'admin' || $user->hasRole('Admin') || $user->hasRole('Super Admin'))) {
+            return redirect()->route('admin.dashboard');
+        }
+
         $products = \App\Models\Product::active()->with('seller')->get();
         $categories = $products->pluck('category')->unique()->filter()->values();
         $therapists = \App\Models\TherapistProfile::with('user')->get();
@@ -76,6 +103,19 @@ Route::middleware([
             'orders'
         ));
     })->name('dashboard');
+
+    // Dedicated Role Dashboards
+    Route::get('/therapist/dashboard', \App\Livewire\Therapist\ConsultationDashboard::class)->name('therapist.dashboard');
+    Route::get('/therapist/schedule', \App\Livewire\Therapist\ScheduleManager::class)->name('therapist.schedule');
+    Route::get('/therapist/profile', \App\Livewire\Therapist\ProfileManager::class)->name('therapist.profile');
+
+    Route::get('/seller/products', \App\Livewire\Seller\ProductManager::class)->name('seller.products.index');
+
+    Route::get('/admin/dashboard', \App\Livewire\Admin\Dashboard::class)->name('admin.dashboard');
+    Route::get('/admin/users', \App\Livewire\Admin\UserManager::class)->name('admin.users.index');
+    Route::get('/admin/therapists', \App\Livewire\Admin\TherapistManager::class)->name('admin.therapists.index');
+    Route::get('/admin/products', \App\Livewire\Admin\ProductManager::class)->name('admin.products.index');
+    Route::get('/admin/orders', \App\Livewire\Admin\OrderManager::class)->name('admin.orders.index');
 
     // Marketplace routes
     Route::get('/marketplace', [MarketplaceController::class, 'index'])->name('marketplace.index');
