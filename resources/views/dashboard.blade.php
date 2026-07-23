@@ -84,20 +84,36 @@
 
                 <!-- 2. BOUTIQUE TAB -->
                 <div x-show="currentTab === 'boutique'" class="space-y-6" x-transition style="display: none;">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
-                        <div>
-                            <h2 class="text-xl font-black text-gray-900 dark:text-white">Marketplace Bien-être</h2>
-                            <p class="text-xs text-slate-400 mt-1">Bougies, infusions, huiles essentielles et objets de méditation.</p>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 space-y-4">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div>
+                                <h2 class="text-xl font-black text-gray-900 dark:text-white">Marketplace Bien-être</h2>
+                                <p class="text-xs text-slate-400 mt-1">Produits sélectionnés selon vos besoins émotionnels.</p>
+                            </div>
+                            <!-- Search and Category Filters -->
+                            <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                                <input type="text" x-model="searchProduct" placeholder="Rechercher un produit..." class="px-4 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-xl text-xs w-full sm:w-48 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <select x-model="filterCategory" class="px-4 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-xl text-xs w-full sm:w-40 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">Toutes les catégories</option>
+                                    @foreach($categories as $cat)
+                                        <option value="{{ $cat }}">{{ $cat }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
-                        <!-- Search and Category Filters -->
-                        <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                            <input type="text" x-model="searchProduct" placeholder="Rechercher un produit..." class="px-4 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-xl text-xs w-full sm:w-48 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            <select x-model="filterCategory" class="px-4 py-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-xl text-xs w-full sm:w-40 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="">Toutes les catégories</option>
-                                @foreach($categories as $cat)
-                                    <option value="{{ $cat }}">{{ $cat }}</option>
-                                @endforeach
-                            </select>
+
+                        <!-- Shop by Need Pill Bar -->
+                        <div class="pt-2 border-t border-slate-100 dark:border-slate-700/50">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-2">Shop by Need (Acheter par Besoin) :</span>
+                            <div class="flex flex-wrap gap-2">
+                                <button @click="filterCategory = ''" :class="filterCategory === '' ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'" class="px-3 py-1.5 rounded-xl text-xs font-bold transition">🔥 Tous</button>
+                                <button @click="filterCategory = 'Stress Relief'" :class="filterCategory === 'Stress Relief' ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'" class="px-3 py-1.5 rounded-xl text-xs font-bold transition">🌿 Stress Relief</button>
+                                <button @click="filterCategory = 'Better Sleep'" :class="filterCategory === 'Better Sleep' ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'" class="px-3 py-1.5 rounded-xl text-xs font-bold transition">😴 Better Sleep</button>
+                                <button @click="filterCategory = 'Focus & Productivity'" :class="filterCategory === 'Focus & Productivity' ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'" class="px-3 py-1.5 rounded-xl text-xs font-bold transition">💡 Focus & Productivity</button>
+                                <button @click="filterCategory = 'Emotional Balance'" :class="filterCategory === 'Emotional Balance' ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'" class="px-3 py-1.5 rounded-xl text-xs font-bold transition">🌸 Emotional Balance</button>
+                                <button @click="filterCategory = 'Self-Care'" :class="filterCategory === 'Self-Care' ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'" class="px-3 py-1.5 rounded-xl text-xs font-bold transition">💜 Self-Care</button>
+                                <button @click="filterCategory = 'Meditation'" :class="filterCategory === 'Meditation' ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'" class="px-3 py-1.5 rounded-xl text-xs font-bold transition">🧘 Meditation</button>
+                            </div>
                         </div>
                     </div>
 
